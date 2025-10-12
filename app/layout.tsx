@@ -3,7 +3,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "TikTok Recipe Extractor",
-  description: "Extract recipes from TikTok cooking videos using AI",
+  description: "Extract recipes from TikTok cooking videos",
 };
 
 export default function RootLayout({

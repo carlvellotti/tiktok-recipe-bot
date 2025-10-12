@@ -30,14 +30,13 @@ export default function RecipeDisplay({ recipe }: RecipeDisplayProps) {
     try {
       const element = recipeRef.current;
       
-      // Force 8.5x11 dimensions for PDF generation
+      // Force 8.5" width for PDF generation (let height grow naturally)
       const originalWidth = element.style.width;
       const originalMinHeight = element.style.minHeight;
-      const originalAspectRatio = element.style.aspectRatio;
       
       element.style.width = '8.5in';
-      element.style.minHeight = '11in';
-      element.style.aspectRatio = '8.5/11';
+      // Remove height constraint to capture full content
+      element.style.minHeight = 'auto';
       
       // Force desktop layout (row layout with proper flex ratios)
       const ingredientsGrid = element.querySelector('.ingredients-grid') as HTMLElement;
@@ -59,19 +58,24 @@ export default function RecipeDisplay({ recipe }: RecipeDisplayProps) {
       }
       
       // Wait for layout to settle
-      await new Promise(resolve => setTimeout(resolve, 100));
+      await new Promise(resolve => setTimeout(resolve, 150));
       
+      // Capture full element height (not just viewport)
       const canvas = await html2canvas(element, {
         scale: 2,
         useCORS: true,
         logging: false,
         backgroundColor: '#ffffff',
+        windowHeight: element.scrollHeight + 100,
+        height: element.scrollHeight + 100,
+        y: 0,
+        scrollY: 0,
+        scrollX: 0,
       });
       
       // Restore original dimensions and layout
       element.style.width = originalWidth;
       element.style.minHeight = originalMinHeight;
-      element.style.aspectRatio = originalAspectRatio;
       
       if (ingredientsGrid && originalFlexDirection !== undefined) {
         ingredientsGrid.style.flexDirection = originalFlexDirection;
@@ -90,20 +94,35 @@ export default function RecipeDisplay({ recipe }: RecipeDisplayProps) {
         format: 'a4',
       });
       
-      const imgWidth = 210; // A4 width in mm
-      const pageHeight = 297; // A4 height in mm
+      const pdfWidth = 210; // A4 width in mm
+      const pdfHeight = 297; // A4 height in mm
+      
+      // Calculate the total height of the content in mm
+      const imgWidth = pdfWidth;
       const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      
+      // Split content across multiple pages if needed
       let heightLeft = imgHeight;
-      let position = 0;
+      let currentPage = 0;
       
-      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-      heightLeft -= pageHeight;
-      
-      while (heightLeft >= 0) {
-        position = heightLeft - imgHeight;
-        pdf.addPage();
-        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-        heightLeft -= pageHeight;
+      while (heightLeft > 0) {
+        const pagePosition = -(currentPage * pdfHeight);
+        
+        if (currentPage > 0) {
+          pdf.addPage();
+        }
+        
+        pdf.addImage(
+          imgData, 
+          'PNG', 
+          0, 
+          pagePosition, 
+          imgWidth, 
+          imgHeight
+        );
+        
+        heightLeft -= pdfHeight;
+        currentPage++;
       }
       
       const fileName = recipe.title.replace(/[^a-z0-9]/gi, '_').toLowerCase();
@@ -144,7 +163,7 @@ export default function RecipeDisplay({ recipe }: RecipeDisplayProps) {
       </div>
 
       {/* Recipe Content - Responsive with PDF forcing */}
-      <div ref={recipeRef} className="p-8 bg-white w-full lg:w-[8.5in] lg:min-h-[11in] mx-auto">
+      <div ref={recipeRef} className="p-8 bg-white w-full lg:w-[8.5in] mx-auto">
         {/* Recipe Header */}
         <div className="recipe-header border-b border-gray-300 pb-3 mb-4">
           <h2 className="text-2xl font-bold text-gray-900 mb-2">
@@ -173,24 +192,40 @@ export default function RecipeDisplay({ recipe }: RecipeDisplayProps) {
           )}
         </div>
 
-        {/* Two Column Layout: Ingredients + Image */}
+        {/* Three Column Layout: Ingredients (2 cols) + Image */}
         <div className="ingredients-grid flex flex-col lg:flex-row gap-4 mb-4">
-          {/* Ingredients Section - 75% width on desktop */}
+          {/* Ingredients Section - Split into 2 columns (37.5% each) */}
           <div className="recipe-section lg:flex-[3]">
             <h3 className="text-lg font-semibold text-gray-900 mb-2 flex items-center gap-1">
               🥘 Ingredients
             </h3>
-            <ul className="space-y-1">
-              {recipe.ingredients.map((ingredient, index) => (
-                <li
-                  key={index}
-                  className="flex items-start gap-2 text-gray-700 text-sm"
-                >
-                  <span className="text-orange-500 flex-shrink-0 leading-snug">•</span>
-                  <span className="leading-snug">{ingredient}</span>
-                </li>
-              ))}
-            </ul>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-4">
+              {/* First Column */}
+              <ul className="space-y-1">
+                {recipe.ingredients.slice(0, Math.ceil(recipe.ingredients.length / 2)).map((ingredient, index) => (
+                  <li
+                    key={index}
+                    className="flex items-start gap-2 text-gray-700 text-sm"
+                  >
+                    <span className="text-orange-500 flex-shrink-0 leading-snug">•</span>
+                    <span className="leading-snug">{ingredient}</span>
+                  </li>
+                ))}
+              </ul>
+              
+              {/* Second Column */}
+              <ul className="space-y-1">
+                {recipe.ingredients.slice(Math.ceil(recipe.ingredients.length / 2)).map((ingredient, index) => (
+                  <li
+                    key={index + Math.ceil(recipe.ingredients.length / 2)}
+                    className="flex items-start gap-2 text-gray-700 text-sm"
+                  >
+                    <span className="text-orange-500 flex-shrink-0 leading-snug">•</span>
+                    <span className="leading-snug">{ingredient}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
 
           {/* Cover Image - 25% width on desktop, full width on mobile */}
