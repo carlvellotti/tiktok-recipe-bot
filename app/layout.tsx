@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "🥘 TikTok Recipe Extractor",
+  title: "TikTok Recipe Extractor",
   description: "Turn any TikTok cooking video into a formatted recipe",
   icons: {
     icon: [

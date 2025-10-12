@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 import RecipeDisplay from './components/RecipeDisplay';
+import Lottie from 'lottie-react';
+import prepareFoodAnimation from '../Prepare Food.json';
 
 interface Recipe {
   title: string;
@@ -64,7 +66,7 @@ export default function Home() {
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-4xl sm:text-5xl font-bold mb-3 bg-gradient-to-r from-orange-500 to-pink-500 bg-clip-text text-transparent leading-tight py-2">
+          <h1 className="text-4xl sm:text-5xl font-bold mb-3 text-orange-500 leading-tight py-2">
             🍳 TikTok Recipe<br className="sm:hidden" /> Extractor
           </h1>
           <p className="text-gray-600 dark:text-gray-300 text-base sm:text-lg">
@@ -105,10 +107,11 @@ export default function Home() {
                 </button>
               </div>
             </div>
+
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-gradient-to-r from-orange-500 to-pink-500 text-white font-semibold py-3 px-6 rounded-lg hover:from-orange-600 hover:to-pink-600 disabled:opacity-50 disabled:cursor-not-allowed transition transform hover:scale-[1.02] active:scale-[0.98]"
+              className="w-full bg-pink-500 text-white font-semibold py-3 px-6 rounded-lg hover:bg-pink-600 disabled:opacity-50 disabled:cursor-not-allowed transition transform hover:scale-[1.02] active:scale-[0.98]"
             >
               {loading ? (
                 <span className="flex items-center justify-center">
@@ -132,6 +135,17 @@ export default function Home() {
             </div>
           )}
         </div>
+
+        {/* Loading Animation */}
+        {loading && (
+          <div className="flex items-center justify-center mb-8 -mt-16">
+            <Lottie 
+              animationData={prepareFoodAnimation} 
+              loop={true}
+              className="w-[600px] h-[600px]"
+            />
+          </div>
+        )}
 
         {/* Recipe Display */}
         {recipe && <RecipeDisplay recipe={recipe} />}
