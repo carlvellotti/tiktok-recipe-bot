@@ -81,7 +81,7 @@ export async function POST(request: NextRequest) {
 
     // Step 3: Upload video to Gemini File API
     console.log('Uploading video to Gemini...');
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-pro-preview-06-05' });
+    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash-preview-09-2025' });
 
     // Convert buffer to base64 for inline data
     const videoBase64 = videoBuffer.toString('base64');

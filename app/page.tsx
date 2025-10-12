@@ -11,6 +11,7 @@ interface Recipe {
   cookTime?: string;
   servings?: string;
   coverImage?: string;
+  sourceUrl?: string;
 }
 
 export default function Home() {
@@ -18,6 +19,15 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [recipe, setRecipe] = useState<Recipe | null>(null);
   const [error, setError] = useState('');
+
+  const handlePaste = async () => {
+    try {
+      const text = await navigator.clipboard.readText();
+      setUrl(text);
+    } catch (err) {
+      console.error('Failed to read clipboard:', err);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,7 +50,8 @@ export default function Home() {
         throw new Error(data.error || 'Failed to extract recipe');
       }
 
-      setRecipe(data.recipe);
+      // Add the original URL to the recipe
+      setRecipe({ ...data.recipe, sourceUrl: url });
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
@@ -50,34 +61,49 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-pink-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
-      <div className="container mx-auto px-4 py-12 max-w-4xl">
+      <div className="container mx-auto px-4 py-8 max-w-4xl">
         {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-orange-500 to-pink-500 bg-clip-text text-transparent leading-tight py-2">
-            🍳 TikTok Recipe Extractor
+        <div className="text-center mb-8">
+          <h1 className="text-4xl sm:text-5xl font-bold mb-3 bg-gradient-to-r from-orange-500 to-pink-500 bg-clip-text text-transparent leading-tight py-2">
+            🍳 TikTok Recipe<br className="sm:hidden" /> Extractor
           </h1>
-          <p className="text-gray-600 dark:text-gray-300 text-lg">
-            Turn any TikTok cooking video into a formatted recipe using AI
+          <p className="text-gray-600 dark:text-gray-300 text-base sm:text-lg">
+            Turn any TikTok recipe into a formatted PDF
           </p>
         </div>
 
         {/* Input Form */}
-        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 mb-8">
+        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 mb-8 w-full lg:max-w-[8.5in] mx-auto">
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label htmlFor="url" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label htmlFor="url" className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">
                 TikTok Video URL
               </label>
-              <input
-                type="text"
-                id="url"
-                value={url}
-                onChange={(e) => setUrl(e.target.value)}
-                placeholder="https://www.tiktok.com/@username/video/..."
-                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition"
-                required
-                disabled={loading}
-              />
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  id="url"
+                  value={url}
+                  onChange={(e) => setUrl(e.target.value)}
+                  placeholder="https://www.tiktok.com/@username/video/..."
+                  className="flex-1 px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition"
+                  required
+                  disabled={loading}
+                  autoFocus
+                />
+                <button
+                  type="button"
+                  onClick={handlePaste}
+                  disabled={loading}
+                  className="px-4 py-3 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition flex items-center gap-2"
+                  title="Paste from clipboard"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                  </svg>
+                  <span className="hidden sm:inline">Paste</span>
+                </button>
+              </div>
             </div>
             <button
               type="submit"
