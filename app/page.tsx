@@ -67,10 +67,10 @@ export default function Home() {
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-4xl sm:text-5xl font-bold mb-3 text-orange-500 leading-tight py-2">
-            🍳 TikTok Recipe<br className="sm:hidden" /> Extractor
+            🍳 tiktok recipe<br className="sm:hidden" /> extractor
           </h1>
           <p className="text-gray-600 dark:text-gray-300 text-base sm:text-lg">
-            Turn any TikTok recipe into a formatted PDF
+            turn any tiktok recipe into a formatted pdf
           </p>
         </div>
 
@@ -79,7 +79,7 @@ export default function Home() {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label htmlFor="url" className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">
-                TikTok Video URL
+                tiktok video url
               </label>
               <div className="flex gap-2">
                 <input
@@ -103,7 +103,7 @@ export default function Home() {
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                   </svg>
-                  <span className="hidden sm:inline">Paste</span>
+                  <span className="hidden sm:inline">paste</span>
                 </button>
               </div>
             </div>
@@ -119,10 +119,10 @@ export default function Home() {
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                   </svg>
-                  Extracting Recipe...
+                  extracting recipe...
                 </span>
               ) : (
-                'Extract Recipe'
+                'extract recipe'
               )}
             </button>
           </form>
@@ -130,16 +130,30 @@ export default function Home() {
           {error && (
             <div className="mt-4 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
               <p className="text-red-800 dark:text-red-300 text-sm">
-                <strong>Error:</strong> {error}
+                <strong>error:</strong> {error}
               </p>
             </div>
           )}
         </div>
 
+        {/* Loading Animation */}
+        {loading && (
+          <div className="flex items-center justify-center mb-8 -mt-8 sm:-mt-16">
+            <Lottie 
+              animationData={prepareFoodAnimation} 
+              loop={true}
+              className="w-[300px] h-[300px] sm:w-[400px] sm:h-[400px] lg:w-[500px] lg:h-[500px]"
+            />
+          </div>
+        )}
+
+        {/* Recipe Display */}
+        {recipe && <RecipeDisplay recipe={recipe} />}
+
         {/* Good Recipes */}
-        <div className="mb-8 w-full lg:max-w-[8.5in] mx-auto">
+        <div className="mt-8 mb-8 w-full lg:max-w-[8.5in] mx-auto">
           <h2 className="text-xl font-bold text-gray-800 dark:text-gray-200 mb-4">
-            Good Recipe Sources
+            good recipe sources
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             {[
@@ -147,19 +161,19 @@ export default function Home() {
                 username: 'majasrecipes', 
                 url: 'https://www.tiktok.com/@majasrecipes',
                 image: '/creators/majasrecipes.jpeg',
-                description: 'Comfort classics like lasagna, chicken pot pie • Cheese croquettes • Cinnamon roll cake bars'
+                description: 'comfort classics like lasagna, chicken pot pie • cheese croquettes • cinnamon roll cake bars'
               },
               { 
                 username: 'stealth_health_life', 
                 url: 'https://www.tiktok.com/@stealth_health_life',
                 image: '/creators/stealth_health_life.jpeg',
-                description: 'Macro-friendly meal prep • High-protein frozen burritos • Sheet pan breakfast sandwiches'
+                description: 'macro-friendly meal prep • high-protein frozen burritos • sheet pan breakfast sandwiches'
               },
               { 
                 username: 'heresyourbite', 
                 url: 'https://www.tiktok.com/@heresyourbite',
                 image: '/creators/heresyourbite.jpeg',
-                description: 'Caramel apple snickerdoodles • 15-min dinners • Creative fusion dishes'
+                description: 'caramel apple snickerdoodles • 15-min dinners • creative fusion dishes'
               },
             ].map((creator) => (
               <a
@@ -194,27 +208,13 @@ export default function Home() {
                   </p>
                   {/* View Profile Link */}
                   <p className="text-sm text-pink-500 dark:text-pink-400 font-medium">
-                    View Profile →
+                    view profile →
                   </p>
                 </div>
               </a>
             ))}
           </div>
         </div>
-
-        {/* Loading Animation */}
-        {loading && (
-          <div className="flex items-center justify-center mb-8 -mt-16">
-            <Lottie 
-              animationData={prepareFoodAnimation} 
-              loop={true}
-              className="w-[600px] h-[600px]"
-            />
-          </div>
-        )}
-
-        {/* Recipe Display */}
-        {recipe && <RecipeDisplay recipe={recipe} />}
       </div>
     </div>
   );

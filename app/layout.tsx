@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "TikTok Recipe Extractor",
-  description: "Turn any TikTok cooking video into a formatted recipe",
+  title: "tiktok recipe extractor",
+  description: "turn any tiktok cooking video into a formatted recipe",
   icons: {
     icon: [
       {
@@ -13,14 +13,14 @@ export const metadata: Metadata = {
     ],
   },
   openGraph: {
-    title: "🥘 TikTok Recipe Extractor",
-    description: "Turn any TikTok cooking video into a formatted recipe",
+    title: "🥘 tiktok recipe extractor",
+    description: "turn any tiktok cooking video into a formatted recipe",
     type: "website",
   },
   twitter: {
     card: "summary",
-    title: "🥘 TikTok Recipe Extractor",
-    description: "Turn any TikTok cooking video into a formatted recipe",
+    title: "🥘 tiktok recipe extractor",
+    description: "turn any tiktok cooking video into a formatted recipe",
   },
 };
 
