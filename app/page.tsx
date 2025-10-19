@@ -2,6 +2,10 @@
 
 import { useState } from 'react';
 import RecipeDisplay from './components/RecipeDisplay';
+import CreatorProfileCard from './components/CreatorProfileCard';
+import UrlInputForm from './components/UrlInputForm';
+import SubmitButton from './components/SubmitButton';
+import ErrorAlert from './components/ErrorAlert';
 import Lottie from 'lottie-react';
 import prepareFoodAnimation from '../Prepare Food.json';
 
@@ -77,63 +81,18 @@ export default function Home() {
         {/* Input Form */}
         <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 mb-8 w-full lg:max-w-[8.5in] mx-auto">
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label htmlFor="url" className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">
-                tiktok video url
-              </label>
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  id="url"
-                  value={url}
-                  onChange={(e) => setUrl(e.target.value)}
-                  placeholder="https://www.tiktok.com/@username/video/..."
-                  className="flex-1 px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition"
-                  required
-                  disabled={loading}
-                  autoFocus
-                />
-                <button
-                  type="button"
-                  onClick={handlePaste}
-                  disabled={loading}
-                  className="px-4 py-3 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition flex items-center gap-2"
-                  title="Paste from clipboard"
-                >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                  </svg>
-                  <span className="hidden sm:inline">paste</span>
-                </button>
-              </div>
-            </div>
-
-            <button
-              type="submit"
+            <UrlInputForm
+              value={url}
+              onChange={setUrl}
+              onPaste={handlePaste}
               disabled={loading}
-              className="w-full bg-pink-500 text-white font-semibold py-3 px-6 rounded-lg hover:bg-pink-600 disabled:opacity-50 disabled:cursor-not-allowed transition transform hover:scale-[1.02] active:scale-[0.98]"
-            >
-              {loading ? (
-                <span className="flex items-center justify-center">
-                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
-                  extracting recipe...
-                </span>
-              ) : (
-                'extract recipe'
-              )}
-            </button>
+              autoFocus
+            />
+
+            <SubmitButton loading={loading} />
           </form>
 
-          {error && (
-            <div className="mt-4 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
-              <p className="text-red-800 dark:text-red-300 text-sm">
-                <strong>error:</strong> {error}
-              </p>
-            </div>
-          )}
+          <ErrorAlert error={error} />
         </div>
 
         {/* Loading Animation */}
@@ -157,61 +116,32 @@ export default function Home() {
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             {[
-              { 
-                username: 'majasrecipes', 
+              {
+                username: 'majasrecipes',
                 url: 'https://www.tiktok.com/@majasrecipes',
                 image: '/creators/majasrecipes.jpeg',
                 description: 'comfort classics like lasagna, chicken pot pie • cheese croquettes • cinnamon roll cake bars'
               },
-              { 
-                username: 'stealth_health_life', 
+              {
+                username: 'stealth_health_life',
                 url: 'https://www.tiktok.com/@stealth_health_life',
                 image: '/creators/stealth_health_life.jpeg',
                 description: 'macro-friendly meal prep • high-protein frozen burritos • sheet pan breakfast sandwiches'
               },
-              { 
-                username: 'heresyourbite', 
+              {
+                username: 'heresyourbite',
                 url: 'https://www.tiktok.com/@heresyourbite',
                 image: '/creators/heresyourbite.jpeg',
                 description: 'caramel apple snickerdoodles • 15-min dinners • creative fusion dishes'
               },
             ].map((creator) => (
-              <a
+              <CreatorProfileCard
                 key={creator.username}
-                href={creator.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group bg-white dark:bg-gray-800 rounded-xl shadow-md hover:shadow-xl transition-all transform hover:scale-105 hover:-translate-y-1 border border-gray-100 dark:border-gray-700 overflow-hidden flex"
-              >
-                <div className="flex flex-col items-center p-6 text-center w-full">
-                  {/* Profile Image */}
-                  <div className="relative w-20 h-20 mb-4 flex-shrink-0">
-                    <img 
-                      src={creator.image} 
-                      alt={`@${creator.username}`}
-                      className="w-full h-full rounded-full object-cover border-4 border-pink-500 group-hover:border-pink-600 transition-colors"
-                    />
-                    {/* TikTok Badge */}
-                    <div className="absolute -bottom-1 -right-1 w-8 h-8 bg-gradient-to-br from-pink-500 to-pink-600 rounded-full flex items-center justify-center shadow-lg">
-                      <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
-                      </svg>
-                    </div>
-                  </div>
-                  {/* Username */}
-                  <p className="text-lg font-semibold text-gray-800 dark:text-gray-200 group-hover:text-pink-500 dark:group-hover:text-pink-400 transition-colors mb-1">
-                    @{creator.username}
-                  </p>
-                  {/* Description */}
-                  <p className="text-sm text-gray-500 dark:text-gray-400 mb-3 flex-grow">
-                    {creator.description}
-                  </p>
-                  {/* View Profile Link */}
-                  <p className="text-sm text-pink-500 dark:text-pink-400 font-medium">
-                    view profile →
-                  </p>
-                </div>
-              </a>
+                username={creator.username}
+                url={creator.url}
+                image={creator.image}
+                description={creator.description}
+              />
             ))}
           </div>
         </div>
