@@ -188,14 +188,16 @@ export default function RecipeDisplay({ recipe }: RecipeDisplayProps) {
         if (col1Y + 5 > pageHeight - margin) return; // Skip if would overflow
         pdf.setFillColor(255, 140, 0);
         pdf.circle(margin + 1.5, col1Y - 1.2, 0.8, 'F'); // Smaller bullet
-        const lines = pdf.splitTextToSize(ingredient, colWidth - 6);
+        // Strip HTML tags from ingredient text for PDF
+        const cleanIngredient = stripHtml(ingredient);
+        const lines = pdf.splitTextToSize(cleanIngredient, colWidth - 6);
         lines.forEach((line: string, idx: number) => {
           pdf.text(line, margin + 5, col1Y);
           if (idx < lines.length - 1) col1Y += 4;
         });
         col1Y += 4.5; // Reduced from 6
       });
-      
+
       // Column 2
       let col2Y = startY;
       const col2X = margin + colWidth + 5;
@@ -203,7 +205,9 @@ export default function RecipeDisplay({ recipe }: RecipeDisplayProps) {
         if (col2Y + 5 > pageHeight - margin) return; // Skip if would overflow
         pdf.setFillColor(255, 140, 0);
         pdf.circle(col2X + 1.5, col2Y - 1.2, 0.8, 'F'); // Smaller bullet
-        const lines = pdf.splitTextToSize(ingredient, colWidth - 6);
+        // Strip HTML tags from ingredient text for PDF
+        const cleanIngredient = stripHtml(ingredient);
+        const lines = pdf.splitTextToSize(cleanIngredient, colWidth - 6);
         lines.forEach((line: string, idx: number) => {
           pdf.text(line, col2X + 5, col2Y);
           if (idx < lines.length - 1) col2Y += 4;
@@ -414,11 +418,14 @@ export default function RecipeDisplay({ recipe }: RecipeDisplayProps) {
                     className="flex items-start gap-2 text-gray-700 text-sm"
                   >
                     <span className="text-orange-500 flex-shrink-0 leading-snug">•</span>
-                    <span className="leading-snug">{ingredient}</span>
+                    <span
+                      className="leading-snug"
+                      dangerouslySetInnerHTML={{ __html: ingredient }}
+                    />
                   </li>
                 ))}
               </ul>
-              
+
               {/* Second Column */}
               <ul className="space-y-1">
                 {recipe.ingredients.slice(Math.ceil(recipe.ingredients.length / 2)).map((ingredient, index) => (
@@ -427,7 +434,10 @@ export default function RecipeDisplay({ recipe }: RecipeDisplayProps) {
                     className="flex items-start gap-2 text-gray-700 text-sm"
                   >
                     <span className="text-orange-500 flex-shrink-0 leading-snug">•</span>
-                    <span className="leading-snug">{ingredient}</span>
+                    <span
+                      className="leading-snug"
+                      dangerouslySetInnerHTML={{ __html: ingredient }}
+                    />
                   </li>
                 ))}
               </ul>
