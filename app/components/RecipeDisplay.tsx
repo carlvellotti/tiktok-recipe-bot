@@ -181,19 +181,7 @@ export default function RecipeDisplay({ recipe }: RecipeDisplayProps) {
       
       const colWidth = (ingredientsWidth - 5) / 2;
       const startY = yPosition;
-      
-      // Add cover image if available - align with first ingredient
-      if (recipe.coverImage) {
-        try {
-          // Image dimensions - 3:4 ratio (width:height) to match original
-          const imgHeight = imageWidth * (4 / 3); // 3:4 aspect ratio
-          // Align top of image with top of first ingredient text
-          pdf.addImage(recipe.coverImage, 'JPEG', imageX, startY - 2, imageWidth, imgHeight, undefined, 'FAST');
-        } catch (err) {
-          console.warn('Could not add image to PDF:', err);
-        }
-      }
-      
+
       // Column 1
       let col1Y = startY;
       col1.forEach((ingredient) => {
@@ -222,6 +210,26 @@ export default function RecipeDisplay({ recipe }: RecipeDisplayProps) {
         });
         col2Y += 4.5; // Reduced from 6
       });
+
+      // Add cover image if available - size it to match the ingredient list height
+      if (recipe.coverImage) {
+        try {
+          // Calculate available height from the ingredients section
+          const availableHeight = Math.max(col1Y, col2Y) - startY;
+          // TikTok images are typically 3:4 ratio (300 width x 400 height)
+          const aspectRatio = 3 / 4; // width / height
+          // Calculate width based on available height to maintain aspect ratio
+          const imgWidth = availableHeight * aspectRatio;
+          // Use the calculated dimensions (may be narrower than allocated space)
+          const imgHeight = availableHeight;
+          // Center the image in the allocated space if it's narrower
+          const imgX = imageX + (imageWidth - imgWidth) / 2;
+          // Align top of image with top of first ingredient text
+          pdf.addImage(recipe.coverImage, 'JPEG', imgX, startY - 2, imgWidth, imgHeight, undefined, 'FAST');
+        } catch (err) {
+          console.warn('Could not add image to PDF:', err);
+        }
+      }
 
       yPosition = Math.max(col1Y, col2Y) + 3; // Reduced from 5
       checkPageBreak(15);
