@@ -2,15 +2,59 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: 0 0% 100%;
+    --foreground: 0 0% 9%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 9%;
+    /* Orange primary color from brand (orange-500) */
+    --primary: 25 95% 53%;
+    --primary-foreground: 0 0% 100%;
+    /* Light orange/peach secondary (orange-100) */
+    --secondary: 34 100% 92%;
+    --secondary-foreground: 0 0% 9%;
+    --muted: 0 0% 96%;
+    --muted-foreground: 0 0% 45%;
+    /* Pink accent color from brand (pink-500) */
+    --accent: 330 81% 60%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 90%;
+    --input: 0 0% 90%;
+    /* Orange ring to match brand */
+    --ring: 25 95% 53%;
+    --radius: 0.5rem;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --background: 0 0% 4%;
+      --foreground: 0 0% 93%;
+      --card: 0 0% 8%;
+      --card-foreground: 0 0% 93%;
+      --popover: 0 0% 4%;
+      --popover-foreground: 0 0% 93%;
+      /* Orange primary stays vibrant in dark mode */
+      --primary: 25 95% 53%;
+      --primary-foreground: 0 0% 100%;
+      /* Darker orange secondary for dark mode */
+      --secondary: 25 50% 20%;
+      --secondary-foreground: 0 0% 98%;
+      --muted: 0 0% 15%;
+      --muted-foreground: 0 0% 64%;
+      /* Pink accent stays vibrant in dark mode */
+      --accent: 330 81% 60%;
+      --accent-foreground: 0 0% 100%;
+      --destructive: 0 62% 30%;
+      --destructive-foreground: 0 0% 98%;
+      --border: 0 0% 15%;
+      --input: 0 0% 15%;
+      --ring: 25 95% 53%;
+    }
   }
 }
 
